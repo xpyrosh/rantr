@@ -28,14 +28,15 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+// so we can replace admin.firestore() with db
+const db = admin.firestore();
+
 // @desc Fetch all posts
 // @route GET /posts
 // @access Public
 app.get("/posts", (req, res) => {
     // doc.data is the individual entries
-    admin
-        .firestore()
-        .collection("posts")
+    db.collection("posts")
         .orderBy("createdAt", "desc")
         .get()
         .then((data) => {
@@ -63,9 +64,7 @@ app.post("/posts", (req, res) => {
         createdAt: new Date().toISOString(),
     };
 
-    admin
-        .firestore()
-        .collection("posts")
+    db.collection("posts")
         .add(newPost)
         .then((doc) => {
             res.json({
@@ -76,6 +75,50 @@ app.post("/posts", (req, res) => {
             // return 500 server error
             res.status(500).json({ error: "There was an error" });
             console.error(err);
+        });
+});
+
+// @desc Sign up new user
+// @route POST /signup
+// @access Public
+app.post("/signup", (req, res) => {
+    const newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
+        handle: req.body.handle,
+    };
+
+    // VALIDATE DATA
+    db.doc(`/users/${newUser.handle}`)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                return res
+                    .status(400)
+                    .json({ handle: "This user already exists." });
+            } else {
+                return firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(
+                        newUser.email,
+                        newUser.password
+                    );
+            }
+        })
+        .then((data) => {
+            return data.user.getIdToken();
+        })
+        .then((token) => {
+            return res.status(201).json({ token });
+        })
+        .catch((err) => {
+            console.error(err);
+            if (err.code === "auth/email-already-in-use") {
+                return res.status(400).json({ email: "Email already in use." });
+            } else {
+                return res.status(500).json({ error: err.code });
+            }
         });
 });
 
