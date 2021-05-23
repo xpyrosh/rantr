@@ -1,22 +1,19 @@
 const functions = require("firebase-functions");
+
 // for access to the database
 const admin = require("firebase-admin");
 
 // .firebaserc already knows which project so we don't need to pass one
 admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//     functions.logger.info("Hello logs!", { structuredData: true });
-//     response.send("Hello from Firebase!");
-// });
+// initialize Express
+const express = require("express");
+const app = express();
 
-// This is a firebase function to GET all data in the POSTS Collection
-exports.getPosts = functions.https.onRequest((req, res) => {
-    //admin.firestore() = db
-    // returns a promise with querysnapshots
+// @desc Fetch all posts
+// @route GET /posts
+// @access Public
+app.get("/posts", (req, res) => {
     // doc.data is the individual entries
     admin
         .firestore()
@@ -32,12 +29,10 @@ exports.getPosts = functions.https.onRequest((req, res) => {
         .catch((err) => console.error(err));
 });
 
-// Firebase Function to POST new data to the POST collection
-exports.createPost = functions.https.onRequest((req, res) => {
-    if (req.method !== "POST") {
-        // Wrong request type, return 400 client error
-        return res.status(400).json({ error: "Method not allowed" });
-    }
+// @desc Create new Post
+// @route POST /posts
+// @access Public
+app.post("/posts", (req, res) => {
     const newPost = {
         body: req.body.body,
         userHandle: req.body.userHandle,
@@ -59,3 +54,7 @@ exports.createPost = functions.https.onRequest((req, res) => {
             console.error(err);
         });
 });
+
+// To make our routes /api
+// ie. https://website.com/api/ROUTE
+exports.api = functions.https.onRequest(app);
