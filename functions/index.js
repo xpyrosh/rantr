@@ -18,11 +18,17 @@ app.get("/posts", (req, res) => {
     admin
         .firestore()
         .collection("posts")
+        .orderBy("createdAt", "desc")
         .get()
         .then((data) => {
             let posts = [];
             data.forEach((doc) => {
-                posts.push(doc.data());
+                posts.push({
+                    postId: doc.id,
+                    body: doc.data().body,
+                    userHandle: doc.data().userHandle,
+                    createdAt: doc.data().createdAt,
+                });
             });
             return res.json(posts);
         })
@@ -36,7 +42,7 @@ app.post("/posts", (req, res) => {
     const newPost = {
         body: req.body.body,
         userHandle: req.body.userHandle,
-        createdAt: admin.firestore.Timestamp.fromDate(new Date()),
+        createdAt: new Date().toISOString(),
     };
 
     admin
