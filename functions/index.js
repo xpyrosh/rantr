@@ -78,6 +78,19 @@ app.post("/posts", (req, res) => {
         });
 });
 
+// helper functions
+const isEmpty = (string) => {
+    if (string.trim() === "") return true;
+    else return false;
+};
+
+const isEmail = (email) => {
+    const emailRegEx =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (email.match(emailRegEx)) return true;
+    else return false;
+};
+
 // @desc Sign up new user
 // @route POST /signup
 // @access Public
@@ -89,7 +102,26 @@ app.post("/signup", (req, res) => {
         handle: req.body.handle,
     };
 
-    // VALIDATE DATA
+    let errors = {};
+
+    // Email Validation
+    if (isEmpty(newUser.email)) {
+        errors.email = "Must not be blank.";
+    } else if (!isEmail(newUser.email)) {
+        errors.email = "Must be a valid email address.";
+    }
+
+    // Password Validation
+    if (isEmpty(newUser.password)) errors.password = "Must not be blank.";
+    if (newUser.password !== newUser.confirmPassword)
+        errors.password = "Passwords do not match.";
+
+    // UserName Validation
+    if (isEmpty(newUser.handle)) errors.handle = "Must not be blank.";
+
+    if (Object.keys(errors).length > 0) return res.status(400).json(errors);
+
+    // Check if user exist then create one if not
     let token, userId;
     db.doc(`/users/${newUser.handle}`)
         .get()
