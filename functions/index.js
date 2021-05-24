@@ -117,7 +117,10 @@ exports.createNotificationOnLike = functions.firestore
                 .doc(`/posts/${snapshot.data().postId}`)
                 .get()
                 .then((doc) => {
-                    if (doc.exists) {
+                    if (
+                        doc.exists &&
+                        doc.data().userHandle !== snapshot.data().userHandle
+                    ) {
                         return db.doc(`/notifications/${snapshot.id}`).set({
                             createdAt: new Date().toISOString(),
                             recipient: doc.data().userHandle,
@@ -129,12 +132,8 @@ exports.createNotificationOnLike = functions.firestore
                     }
                 })
                 // no returns or status code since this is a database trigger not API end point
-                .then(() => {
-                    return;
-                })
                 .catch((err) => {
                     console.error(err);
-                    return;
                 })
         );
     });
@@ -145,12 +144,8 @@ exports.deleteNotificationOnUnLike = functions.firestore
         return db
             .doc(`/notifications/${snapshot.id}`)
             .delete()
-            .then(() => {
-                return;
-            })
             .catch((err) => {
                 console.error(err);
-                return;
             });
     });
 
@@ -162,7 +157,10 @@ exports.createNotificationOnComment = functions.firestore
                 .doc(`/posts/${snapshot.data().postId}`)
                 .get()
                 .then((doc) => {
-                    if (doc.exists) {
+                    if (
+                        doc.exists &&
+                        doc.data().userHandle !== snapshot.data().userHandle
+                    ) {
                         return db.doc(`/notifications/${snapshot.id}`).set({
                             createdAt: new Date().toISOString(),
                             recipient: doc.data().userHandle,
@@ -174,12 +172,8 @@ exports.createNotificationOnComment = functions.firestore
                     }
                 })
                 // no returns or status code since this is a database trigger not API end point
-                .then(() => {
-                    return;
-                })
                 .catch((err) => {
                     console.error(err);
-                    return;
                 })
         );
     });
