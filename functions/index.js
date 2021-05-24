@@ -98,36 +98,40 @@ app.get("/user", FBAuth, getAuthenticatedUser);
 exports.api = functions.https.onRequest(app);
 
 exports.createNotificationOnLike = functions.firestore
-    .document("like/{id}")
+    .document("likes/{id}")
     .onCreate((snapshot) => {
-        db.doc(`/posts/${snapshot.data().postId}`)
-            .get()
-            .then((doc) => {
-                if (doc.exists) {
-                    return db.doc(`/notifications/${snapshot.id}`).set({
-                        createdAt: new Date().toISOString(),
-                        recipient: doc.data().userHandle,
-                        sender: snapshot.data().userHandle,
-                        type: "like",
-                        read: false,
-                        postId: doc.id,
-                    });
-                }
-            })
-            // no returns or status code since this is a database trigger not API end point
-            .then(() => {
-                return;
-            })
-            .catch((err) => {
-                console.error(err);
-                return;
-            });
+        return (
+            db
+                .doc(`/posts/${snapshot.data().postId}`)
+                .get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        return db.doc(`/notifications/${snapshot.id}`).set({
+                            createdAt: new Date().toISOString(),
+                            recipient: doc.data().userHandle,
+                            sender: snapshot.data().userHandle,
+                            type: "like",
+                            read: false,
+                            postId: doc.id,
+                        });
+                    }
+                })
+                // no returns or status code since this is a database trigger not API end point
+                .then(() => {
+                    return;
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return;
+                })
+        );
     });
 
 exports.deleteNotificationOnUnLike = functions.firestore
-    .document("like/{id}")
+    .document("likes/{id}")
     .onDelete((snapshot) => {
-        db.doc(`/notifications/${snapshot.id}`)
+        return db
+            .doc(`/notifications/${snapshot.id}`)
             .delete()
             .then(() => {
                 return;
