@@ -197,7 +197,7 @@ exports.unlikePost = (req, res) => {
                 return res.status(400).json({ error: "Post not liked." });
             } else {
                 return db
-                    .collection(`/likes/${data.docs[0].id}`)
+                    .doc(`/likes/${data.docs[0].id}`)
                     .delete()
                     .then(() => {
                         postData.likeCount--;
