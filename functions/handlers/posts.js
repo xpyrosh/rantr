@@ -95,6 +95,11 @@ exports.commentOnPost = (req, res) => {
             if (!doc.exists) {
                 return res.status(404).json({ error: "Post not found." });
             }
+            return doc.ref.update({
+                commentCount: doc.data().commentCount + 1,
+            });
+        })
+        .then(() => {
             return db.collection("comments").add(newComment);
         })
         .then(() => {
@@ -215,3 +220,5 @@ exports.unlikePost = (req, res) => {
             res.status(500).json({ error: err.code });
         });
 };
+
+// delete post
