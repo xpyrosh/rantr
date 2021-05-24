@@ -145,26 +145,29 @@ exports.deleteNotificationOnUnLike = functions.firestore
 exports.createNotificationOnComment = functions.firestore
     .document("comments/{id}")
     .onCreate((snapshot) => {
-        db.doc(`/posts/${snapshot.data().postId}`)
-            .get()
-            .then((doc) => {
-                if (doc.exists) {
-                    return db.doc(`/notifications/${snapshot.id}`).set({
-                        createdAt: new Date().toISOString(),
-                        recipient: doc.data().userHandle,
-                        sender: snapshot.data().userHandle,
-                        type: "comment",
-                        read: false,
-                        postId: doc.id,
-                    });
-                }
-            })
-            // no returns or status code since this is a database trigger not API end point
-            .then(() => {
-                return;
-            })
-            .catch((err) => {
-                console.error(err);
-                return;
-            });
+        return (
+            db
+                .doc(`/posts/${snapshot.data().postId}`)
+                .get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        return db.doc(`/notifications/${snapshot.id}`).set({
+                            createdAt: new Date().toISOString(),
+                            recipient: doc.data().userHandle,
+                            sender: snapshot.data().userHandle,
+                            type: "comment",
+                            read: false,
+                            postId: doc.id,
+                        });
+                    }
+                })
+                // no returns or status code since this is a database trigger not API end point
+                .then(() => {
+                    return;
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return;
+                })
+        );
     });
