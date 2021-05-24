@@ -30,6 +30,16 @@ let db = {
             createdAt: "ISO Date",
         },
     ],
+    notifications: [
+        {
+            recipient: "user",
+            sender: "jhon",
+            read: "true/false",
+            postId: "sa9d0i90sa",
+            type: "like/comment",
+            createdAt: "ISO Date",
+        },
+    ],
 };
 
 const userDetails = {
