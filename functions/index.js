@@ -9,7 +9,7 @@ const app = express();
 const FBAuth = require("./util/fbAuth");
 
 // Import handlers
-const { getAllPosts, newPost } = require("./handlers/posts");
+const { getAllPosts, newPost, getPost } = require("./handlers/posts");
 const {
     signUp,
     logIn,
@@ -28,7 +28,16 @@ app.get("/posts", getAllPosts);
 // @desc Create new Post
 // @route POST /posts
 // @access Protected
-app.post("/posts", FBAuth, newPost);
+app.post("/post", FBAuth, newPost);
+
+// @desc Get single post
+// @route GET /post/:postId
+// @access Public
+app.get("/post/:postId", getPost);
+// delete post
+// like post
+// unlike post
+// comment on post
 
 //* */ USER ROUTES /* *//
 
@@ -53,7 +62,7 @@ app.post("/user/image", FBAuth, uploadImage);
 app.post("/user", FBAuth, addUserDetails);
 
 // @desc Get details of logged in user
-// @route POST /user
+// @route GET /user
 // @access Protected
 app.get("/user", FBAuth, getAuthenticatedUser);
 

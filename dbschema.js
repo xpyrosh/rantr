@@ -17,9 +17,17 @@ let db = {
         {
             userHandle: "user",
             body: "This is the body",
-            createdAt: "ISO DATE",
+            createdAt: "ISO Date",
             likeCount: 5,
             commentCount: 2,
+        },
+    ],
+    comments: [
+        {
+            userHandle: "username",
+            postId: "d89asu89duas",
+            body: "a post",
+            createdAt: "ISO Date",
         },
     ],
 };
