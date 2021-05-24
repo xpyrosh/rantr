@@ -14,6 +14,8 @@ const {
     newPost,
     getPost,
     commentOnPost,
+    likePost,
+    unlikePost,
 } = require("./handlers/posts");
 const {
     signUp,
@@ -39,9 +41,18 @@ app.post("/post", FBAuth, newPost);
 // @route GET /post/:postId
 // @access Public
 app.get("/post/:postId", getPost);
+
 // delete post
-// like post
-// unlike post
+
+// @desc Like a post
+// @route GET /post/:postId/like
+// @access Protected
+app.get("/post/:postId/like", FBAuth, likePost);
+
+// @desc Unlike a post
+// @route GET /post/:postId/unlike
+// @access Protected
+app.get("/post/:postId/unlike", FBAuth, unlikePost);
 
 // @desc Comment on a post
 // @route POST /post/:postId/comment
