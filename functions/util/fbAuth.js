@@ -1,4 +1,4 @@
-const { admin } = require("./admin");
+const { admin, db } = require("./admin");
 
 // Authenticating user token
 module.exports = (req, res, next) => {
