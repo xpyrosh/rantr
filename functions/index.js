@@ -10,7 +10,12 @@ const FBAuth = require("./util/fbAuth");
 
 // Import handlers
 const { getAllPosts, newPost } = require("./handlers/posts");
-const { signUp, logIn, uploadImage } = require("./handlers/users");
+const {
+    signUp,
+    logIn,
+    uploadImage,
+    addUserDetails,
+} = require("./handlers/users");
 
 //* */ POST ROUTES/* *//
 
@@ -21,7 +26,7 @@ app.get("/posts", getAllPosts);
 
 // @desc Create new Post
 // @route POST /posts
-// @access Public
+// @access Protected
 app.post("/posts", FBAuth, newPost);
 
 //* */ USER ROUTES /* *//
@@ -38,8 +43,13 @@ app.post("/login", logIn);
 
 // @desc Upload profile image
 // @route POST /user/image
-// @access Public
+// @access Protected
 app.post("/user/image", FBAuth, uploadImage);
+
+// @desc Add user details
+// @route POST /user
+// @access Protected
+app.post("/user", FBAuth, addUserDetails);
 
 // To make our routes /api
 // ie. https://website.com/api/ROUTE
