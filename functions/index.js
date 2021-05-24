@@ -15,6 +15,7 @@ const {
     logIn,
     uploadImage,
     addUserDetails,
+    getAuthenticatedUser,
 } = require("./handlers/users");
 
 //* */ POST ROUTES/* *//
@@ -50,6 +51,11 @@ app.post("/user/image", FBAuth, uploadImage);
 // @route POST /user
 // @access Protected
 app.post("/user", FBAuth, addUserDetails);
+
+// @desc Get details of logged in user
+// @route POST /user
+// @access Protected
+app.get("/user", FBAuth, getAuthenticatedUser);
 
 // To make our routes /api
 // ie. https://website.com/api/ROUTE
