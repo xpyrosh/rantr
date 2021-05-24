@@ -9,7 +9,12 @@ const app = express();
 const FBAuth = require("./util/fbAuth");
 
 // Import handlers
-const { getAllPosts, newPost, getPost } = require("./handlers/posts");
+const {
+    getAllPosts,
+    newPost,
+    getPost,
+    commentOnPost,
+} = require("./handlers/posts");
 const {
     signUp,
     logIn,
@@ -37,7 +42,11 @@ app.get("/post/:postId", getPost);
 // delete post
 // like post
 // unlike post
-// comment on post
+
+// @desc Comment on a post
+// @route POST /post/:postId/comment
+// @access Protected
+app.post("/post/:postId/comment", FBAuth, commentOnPost);
 
 //* */ USER ROUTES /* *//
 
