@@ -27,6 +27,8 @@ const {
     uploadImage,
     addUserDetails,
     getAuthenticatedUser,
+    getUserDetails,
+    markNotificationsRead,
 } = require("./handlers/users");
 
 //* */ POST ROUTES/* *//
@@ -92,6 +94,16 @@ app.post("/user", FBAuth, addUserDetails);
 // @route GET /user
 // @access Protected
 app.get("/user", FBAuth, getAuthenticatedUser);
+
+// @desc Get details of logged in user
+// @route GET /user
+// @access Public
+app.get("/user/:handle", getUserDetails);
+
+// @desc Get details of logged in user
+// @route GET /user
+// @access Public
+app.post("/notifications", FBAuth, markNotificationsRead);
 
 // To make our routes /api
 // ie. https://website.com/api/ROUTE
